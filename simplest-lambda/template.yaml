@@ -14,12 +14,15 @@ Resources:
   SimplestLambdaFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: SimplestLambdaFunction/target/simplest-lambda-1.0.jar
+      CodeUri: SimplestLambdaFunction
       Handler: net.shyshkin.study.aws.serverless.simplest.App::helloWorld
       Runtime: java11
       Architectures:
         - x86_64
       MemorySize: 128
+    Metadata:
+      BuildMethod: makefile
+
 
 
 
