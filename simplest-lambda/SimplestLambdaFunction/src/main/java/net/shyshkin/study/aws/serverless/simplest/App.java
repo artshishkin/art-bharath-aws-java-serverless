@@ -5,8 +5,11 @@ package net.shyshkin.study.aws.serverless.simplest;
  */
 public class App {
 
-    public void helloWorld() {
-        System.out.println("Hello World");
+    public String helloWorld(String name) {
+
+        String message = "Hello " + name;
+        System.out.println(message);
+        return message;
     }
 
 }
