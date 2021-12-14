@@ -42,3 +42,9 @@ Serverless using AWS Lambda for Java Developers - Tutorial from Bharath Thippire
 }
 ```
 
+#####  35. Test Locally
+
+-  `sam local invoke SimplestLambdaFunction --event events/event.json`
+-  `docker image ls`
+   -  `public.ecr.aws/sam/emulation-java11   rapid-1.36.0-x86_64`
+   -  pulled image and executed in it
