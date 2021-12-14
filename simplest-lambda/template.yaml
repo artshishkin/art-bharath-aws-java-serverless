@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  simplest-lambda
+
+  Sample SAM Template for simplest-lambda
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+
+Resources:
+  SimplestLambdaFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: SimplestLambdaFunction
+      Handler: net.shyshkin.study.aws.serverless.simplest.App::helloWorld
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 128
+
+
+
