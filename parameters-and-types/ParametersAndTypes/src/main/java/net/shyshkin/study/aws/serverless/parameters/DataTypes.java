@@ -42,4 +42,21 @@ public class DataTypes {
         System.out.println("Employee data has been saved: " + employeeData);
     }
 
+    public Map<String, List<Integer>> getStudentScores() {
+        return Map.of(
+                "Art", getRandomList(),
+                "Kate", getRandomList(),
+                "Arina", getRandomList(),
+                "Nazar", getRandomList()
+        );
+    }
+
+    private List<Integer> getRandomList() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        return IntStream.range(0, random.nextInt(1, 10))
+                .boxed()
+                .map(i -> random.nextInt(1, 100))
+                .collect(Collectors.toList());
+    }
+
 }
