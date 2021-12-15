@@ -65,3 +65,4 @@ hs_err_pid*
 .aws-sam/
 
 dependency-reduced-pom.xml
+/parameters-and-types/outputfile.txt
