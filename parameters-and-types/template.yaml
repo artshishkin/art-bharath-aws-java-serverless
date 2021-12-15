@@ -56,4 +56,9 @@ Resources:
     Properties:
       Handler: net.shyshkin.study.aws.serverless.parameters.Pojos::getClinicalData
 
+  InputOutputStreamFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: net.shyshkin.study.aws.serverless.parameters.InputOutputStreams::getOutput
+
 
