@@ -32,3 +32,19 @@ Resources:
     Properties:
       CodeUri: ParametersAndTypes
       Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getWrappedDouble
+
+  GetListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ParametersAndTypes
+      Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getScores
+
+  GetScoresByNameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ParametersAndTypes
+      Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getScoresByName
+
+
+
+
