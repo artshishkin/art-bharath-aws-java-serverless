@@ -86,4 +86,14 @@ Resources:
     Properties:
       Handler: net.shyshkin.study.aws.serverless.parameters.Variables::coldStartBasics
 
+  TruckTrackerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: net.shyshkin.study.aws.serverless.parameters.assignment.TruckTracker::truckTracker
+
+  GetTicketFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: net.shyshkin.study.aws.serverless.parameters.assignment.TicketService::getTicket
+
 
