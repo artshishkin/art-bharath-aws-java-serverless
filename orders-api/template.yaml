@@ -13,6 +13,7 @@ Resources:
       Handler: net.shyshkin.study.aws.serverless.api.CreateOrderFunction::handleRequest
       Runtime: java11
       MemorySize: 128
+      Timeout: 20
       Events:
         CreateOrderEvent:
           Type: Api
