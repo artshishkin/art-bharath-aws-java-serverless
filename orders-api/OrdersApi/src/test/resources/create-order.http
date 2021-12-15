@@ -1,0 +1,11 @@
+### Locally - sam local start-api
+POST http://localhost:3000/orders
+Content-Type: application/json
+
+{
+  "id": 1234,
+  "itemName": "milk",
+  "quantity": 4321
+}
+
+###
