@@ -72,4 +72,12 @@ Resources:
       Timeout: 1
       Handler: net.shyshkin.study.aws.serverless.parameters.ContextExample::timeoutExample
 
+  ViewEnvironmentVariablesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: net.shyshkin.study.aws.serverless.parameters.Variables::viewEnvironmentVariables
+      Environment:
+        Variables:
+          MY_ENV_VAR_1: This is environment variable very important value
+
 
