@@ -12,39 +12,39 @@ Globals:
     Architectures:
       - x86_64
     MemorySize: 128
+    CodeUri: ParametersAndTypes
 
 Resources:
 
   GetNumberFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ParametersAndTypes
       Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getNumber
 
   GetBooleanFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ParametersAndTypes
       Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getBoolean
 
   GetWrappedDoubleFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ParametersAndTypes
       Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getWrappedDouble
 
   GetListFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ParametersAndTypes
       Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getScores
 
   GetScoresByNameFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ParametersAndTypes
       Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getScoresByName
 
+  SaveEmployeeDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::saveEmployeeData
 
 
 

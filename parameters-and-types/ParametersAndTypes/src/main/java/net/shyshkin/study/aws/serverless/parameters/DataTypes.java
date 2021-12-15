@@ -1,6 +1,7 @@
 package net.shyshkin.study.aws.serverless.parameters;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,8 +34,12 @@ public class DataTypes {
     public List<Integer> getScoresByName(List<String> names) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         return names.stream()
-                .map(name->random.nextInt(1, 100))
+                .map(name -> random.nextInt(1, 100))
                 .collect(Collectors.toList());
+    }
+
+    public void saveEmployeeData(Map<String, Integer> employeeData) {
+        System.out.println("Employee data has been saved: " + employeeData);
     }
 
 }
