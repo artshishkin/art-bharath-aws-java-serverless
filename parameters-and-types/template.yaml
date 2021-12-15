@@ -61,4 +61,9 @@ Resources:
     Properties:
       Handler: net.shyshkin.study.aws.serverless.parameters.InputOutputStreams::getOutput
 
+  ViewContextFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: net.shyshkin.study.aws.serverless.parameters.ContextExample::viewContext
+
 
