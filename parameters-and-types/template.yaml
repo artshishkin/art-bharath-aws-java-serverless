@@ -7,7 +7,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 20
+#    Timeout: 20 #default is 3 seconds
     Runtime: java11
     Architectures:
       - x86_64
@@ -65,5 +65,11 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: net.shyshkin.study.aws.serverless.parameters.ContextExample::viewContext
+
+  TimeoutExampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 1
+      Handler: net.shyshkin.study.aws.serverless.parameters.ContextExample::timeoutExample
 
 

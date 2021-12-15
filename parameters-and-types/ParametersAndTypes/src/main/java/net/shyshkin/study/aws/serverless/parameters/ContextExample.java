@@ -22,4 +22,11 @@ public class ContextExample {
         return context.getLogGroupName();
     }
 
+    public String timeoutExample(Context context) throws InterruptedException {
+
+        Thread.sleep(2000);
+
+        return "OK";
+    }
+
 }
