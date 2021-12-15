@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  parameters-and-types
+
+  Sample SAM Template for parameters-and-types
+
+Globals:
+  Function:
+    Timeout: 20
+    Runtime: java11
+    Architectures:
+      - x86_64
+    MemorySize: 128
+
+Resources:
+
+  GetNumberFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ParametersAndTypes
+      Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getNumber
+
+  GetBooleanFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ParametersAndTypes
+      Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getBoolean
+
+  GetWrappedDoubleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ParametersAndTypes
+      Handler: net.shyshkin.study.aws.serverless.parameters.DataTypes::getWrappedDouble
