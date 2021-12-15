@@ -1,3 +1,7 @@
+### Locally - sam local start-api
+GET http://localhost:3000/orders
+Accept: application/json
+
 ### Remotely - sam deploy
 GET https://le91t4b8th.execute-api.eu-north-1.amazonaws.com/Prod/orders
 Content-Type: application/json
