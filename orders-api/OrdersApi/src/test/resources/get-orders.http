@@ -1,0 +1,6 @@
+### Remotely - sam deploy
+GET https://le91t4b8th.execute-api.eu-north-1.amazonaws.com/Prod/orders
+Content-Type: application/json
+
+
+
