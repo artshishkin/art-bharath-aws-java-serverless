@@ -33,6 +33,21 @@ Resources:
             Path: /customers
             Method: post
 
+  ReadCustomersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CustomersApi
+      Handler: net.shyshkin.study.aws.serverless.api.ReadCustomersFunction::handleRequest
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref CustomersTable
+      Events:
+        CreateNewCustomer:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: get
+
   CustomersTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
