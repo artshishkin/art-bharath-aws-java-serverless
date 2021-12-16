@@ -1,7 +1,6 @@
 package net.shyshkin.study.aws.serverless.api;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -18,13 +17,9 @@ import java.util.stream.Collectors;
 
 public class ReadOrdersFunction implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final AmazonDynamoDB dynamoDB = AmazonDynamoDBClientBuilder
-            .standard()
-            .withRegion(System.getenv("AWS_REGION"))
-            .build();
-
-    private final String tableName = System.getenv("ORDERS_TABLE");
+    private final ObjectMapper objectMapper = Utils.objectMapper();
+    private final AmazonDynamoDB dynamoDB = Utils.amazonDynamoDB();
+    private final String tableName = Utils.TABLE_NAME;
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
