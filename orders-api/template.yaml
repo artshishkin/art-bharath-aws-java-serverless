@@ -11,6 +11,9 @@ Globals:
     Runtime: java11
     MemorySize: 128
     Timeout: 20
+    Environment:
+      Variables:
+        ORDERS_TABLE: !Ref OrdersTable
 
 Resources:
   CreateOrderFunction:
@@ -34,6 +37,13 @@ Resources:
           Properties:
             Method: GET
             Path: /orders
+
+  OrdersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: Number
 
 
 
