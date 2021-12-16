@@ -51,6 +51,10 @@ Resources:
         Name: id
         Type: Number
 
+Outputs:
+  OrdersApi:
+    Description: "API Gateway endpoint URL for Prod stage for create and get orders endpoints"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/orders"
 
 
 
