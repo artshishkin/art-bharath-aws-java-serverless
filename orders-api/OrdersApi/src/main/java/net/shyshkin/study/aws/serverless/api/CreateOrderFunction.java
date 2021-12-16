@@ -18,7 +18,12 @@ import java.util.Map;
 public class CreateOrderFunction implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBClientBuilder.defaultClient());
+    private final DynamoDB dynamoDB = new DynamoDB(
+            AmazonDynamoDBClientBuilder
+                    .standard()
+                    .withRegion(System.getenv("AWS_REGION"))
+                    .build()
+    );
     private final String tableName = System.getenv("ORDERS_TABLE");
 
     @Override

@@ -19,7 +19,11 @@ import java.util.stream.Collectors;
 public class ReadOrdersFunction implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final AmazonDynamoDB dynamoDB = AmazonDynamoDBClientBuilder.defaultClient();
+    private final AmazonDynamoDB dynamoDB = AmazonDynamoDBClientBuilder
+            .standard()
+            .withRegion(System.getenv("AWS_REGION"))
+            .build();
+
     private final String tableName = System.getenv("ORDERS_TABLE");
 
     @Override
