@@ -17,18 +17,19 @@ import java.util.Map;
 
 public class CreateOrderFunction implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBClientBuilder.defaultClient());
+    private final String tableName = System.getenv("ORDERS_TABLE");
+
     @Override
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
                 .withHeaders(Map.of("Content-Type", "application/json"));
 
         try {
             Order order = objectMapper.readValue(input.getBody(), Order.class);
 
-            DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBClientBuilder.defaultClient());
-            String tableName = System.getenv("ORDERS_TABLE");
             Table table = dynamoDB.getTable(tableName);
             Item item = new Item()
                     .withPrimaryKey("id", order.id)

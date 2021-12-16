@@ -18,17 +18,18 @@ import java.util.stream.Collectors;
 
 public class ReadOrdersFunction implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final AmazonDynamoDB dynamoDB = AmazonDynamoDBClientBuilder.defaultClient();
+    private final String tableName = System.getenv("ORDERS_TABLE");
+
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
                 .withHeaders(Map.of("Content-Type", "application/json"));
 
         try {
 
-            AmazonDynamoDB dynamoDB = AmazonDynamoDBClientBuilder.defaultClient();
-            String tableName = System.getenv("ORDERS_TABLE");
             ScanResult scanResult = dynamoDB.scan(new ScanRequest().withTableName(tableName));
 
             int statusCode = scanResult.getSdkHttpMetadata().getHttpStatusCode();
