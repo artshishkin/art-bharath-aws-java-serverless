@@ -1,5 +1,10 @@
 package net.shyshkin.study.aws.serverless.api;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
+import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
@@ -22,10 +27,20 @@ public class CreateOrderFunction implements RequestHandler<APIGatewayProxyReques
         try {
             Order order = objectMapper.readValue(input.getBody(), Order.class);
 
+            DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBClientBuilder.defaultClient());
+            String tableName = System.getenv("ORDERS_TABLE");
+            Table table = dynamoDB.getTable(tableName);
+            Item item = new Item()
+                    .withPrimaryKey("id", order.id)
+                    .withString("itemId", order.itemName)
+                    .withInt("quantity", order.quantity);
+            PutItemOutcome putItemOutcome = table.putItem(item);
+            var sdkHttpMetadata = putItemOutcome.getPutItemResult().getSdkHttpMetadata();
+            int statusCode = sdkHttpMetadata.getHttpStatusCode();
 
             response
                     .withBody("{\"orderId\": \"" + order.id + "\"}")
-                    .withStatusCode(200);
+                    .withStatusCode(statusCode);
 
         } catch (JsonProcessingException e) {
             context.getLogger().log("Exception happens: " + e.getMessage());
