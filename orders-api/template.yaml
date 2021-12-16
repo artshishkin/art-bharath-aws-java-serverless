@@ -56,6 +56,23 @@ Outputs:
     Description: "API Gateway endpoint URL for Prod stage for create and get orders endpoints"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/orders"
 
+  CreateOrderFunction:
+    Description: "Create Order Lambda Function ARN"
+    Value: !GetAtt CreateOrderFunction.Arn
+
+  CreateOrderFunctionIAMRole:
+    Description: "Create Order Lambda Function IAM Role ARN"
+    Value: !GetAtt CreateOrderFunctionRole.Arn
+
+  ReadOrdersFunction:
+    Description: "Read Orders Lambda Function ARN"
+    Value: !GetAtt ReadOrdersFunction.Arn
+
+  ReadOrdersFunctionIAMRole:
+    Description: "Read Orders Lambda Function IAM Role ARN"
+    Value: !GetAtt ReadOrdersFunctionRole.Arn
+
+
 
 
 
