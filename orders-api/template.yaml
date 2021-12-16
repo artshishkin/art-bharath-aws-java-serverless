@@ -20,6 +20,9 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: net.shyshkin.study.aws.serverless.api.CreateOrderFunction::handleRequest
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref OrdersTable
       Events:
         CreateOrderEvent:
           Type: Api
@@ -31,6 +34,9 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: net.shyshkin.study.aws.serverless.api.ReadOrdersFunction::handleRequest
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref OrdersTable
       Events:
         CreateOrderEvent:
           Type: Api
