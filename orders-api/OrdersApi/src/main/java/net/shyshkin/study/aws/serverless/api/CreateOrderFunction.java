@@ -32,7 +32,7 @@ public class CreateOrderFunction implements RequestHandler<APIGatewayProxyReques
             Table table = dynamoDB.getTable(tableName);
             Item item = new Item()
                     .withPrimaryKey("id", order.id)
-                    .withString("itemId", order.itemName)
+                    .withString("itemName", order.itemName)
                     .withInt("quantity", order.quantity);
             PutItemOutcome putItemOutcome = table.putItem(item);
             var sdkHttpMetadata = putItemOutcome.getPutItemResult().getSdkHttpMetadata();

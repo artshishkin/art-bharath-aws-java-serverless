@@ -9,8 +9,8 @@ Globals:
   Function:
     CodeUri: OrdersApi
     Runtime: java11
-    MemorySize: 128
-    Timeout: 20
+    MemorySize: 256
+    Timeout: 40
     Environment:
       Variables:
         ORDERS_TABLE: !Ref OrdersTable

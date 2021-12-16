@@ -13,9 +13,9 @@ POST https://le91t4b8th.execute-api.eu-north-1.amazonaws.com/Prod/orders
 Content-Type: application/json
 
 {
-  "id": 1234,
+  "id": {{$randomInt}},
   "itemName": "milk",
-  "quantity": 4321
+  "quantity": {{$randomInt}}
 }
 
 

@@ -36,7 +36,7 @@ public class ReadOrdersFunction implements RequestHandler<APIGatewayProxyRequest
             List<Order> orders = scanResult.getItems().stream()
                     .map(item -> new Order(
                             Integer.parseInt(item.get("id").getN()),
-                            item.get("itemId").getS(),
+                            item.get("itemName").getS(),
                             Integer.parseInt(item.get("quantity").getN()))
                     )
                     .collect(Collectors.toList());
