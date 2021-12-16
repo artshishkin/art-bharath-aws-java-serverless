@@ -1,0 +1,12 @@
+### Create new Customer
+POST https://l7308ule00.execute-api.eu-north-1.amazonaws.com/Prod/customers
+Content-Type: application/json
+
+{
+  "id": {{$randomInt}},
+  "firstName": "Art {{$randomInt}}",
+  "lastName": "Shyshkin {{$uuid}}",
+  "rewardPoints": {{$randomInt}}
+}
+
+###

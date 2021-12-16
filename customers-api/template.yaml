@@ -15,7 +15,7 @@ Globals:
     MemorySize: 256
     Environment:
       Variables:
-        PARAM1: VALUE
+        CUSTOMER_TABLE: !Ref CustomersTable
 
 Resources:
   CreateCustomerFunction:
@@ -23,12 +23,22 @@ Resources:
     Properties:
       CodeUri: CustomersApi
       Handler: net.shyshkin.study.aws.serverless.api.CreateCustomerFunction::handleRequest
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CustomersTable
       Events:
         CreateNewCustomer:
           Type: Api
           Properties:
             Path: /customers
             Method: post
+
+  CustomersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: Number
 
 Outputs:
   CustomersApi:
