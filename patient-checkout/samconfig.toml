@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "patient-checkout-stack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1alt62pqr870u"
+s3_prefix = "patient-checkout-stack"
+region = "eu-north-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
