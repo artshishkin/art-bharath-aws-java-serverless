@@ -6,6 +6,9 @@ import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.shyshkin.study.aws.serverless.s3sns.model.PatientCheckoutEvent;
@@ -15,6 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
 
@@ -22,6 +26,8 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
     private final TypeReference<List<PatientCheckoutEvent>> checkoutEventsType = new TypeReference<>() {
     };
     private final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
+    private final AmazonSNS sns = AmazonSNSClientBuilder.defaultClient();
+    private final String topicArn = System.getenv("PATIENT_CHECKOUT_TOPIC");
 
     @Override
     public Void handleRequest(S3Event input, Context context) {
@@ -33,8 +39,11 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
                 .map(S3Object::getObjectContent)
                 .map(this::toPatientCheckoutEvents)
                 .flatMap(Collection::stream)
-                .forEach(patientCheckoutEvent -> context.getLogger().log(patientCheckoutEvent.toString()));
-
+                .peek(patientCheckoutEvent -> context.getLogger().log(patientCheckoutEvent.toString()))
+                .map(this::toJson)
+                .filter(Objects::nonNull)
+                .map(json -> sns.publish(topicArn, json))
+                .forEach(publishResult -> context.getLogger().log(publishResult.toString()));
         return null;
     }
 
@@ -43,6 +52,14 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
             return objectMapper.readValue(s3InputStream, checkoutEventsType);
         } catch (IOException e) {
             return new ArrayList<>();
+        }
+    }
+
+    private String toJson(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            return null;
         }
     }
 
