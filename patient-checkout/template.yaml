@@ -42,3 +42,19 @@ Resources:
 
   PatientCheckoutSNSTopic:
     Type: AWS::SNS::Topic
+
+  BillManagementLambdaFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: PatientCheckout
+      Handler: net.shyshkin.study.aws.serverless.s3sns.BillManagementLambda::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Events:
+        PatientBillingSNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref PatientCheckoutSNSTopic
+
