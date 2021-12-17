@@ -22,7 +22,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          PARAM1: VALUE
+          PATIENT_CHECKOUT_TOPIC: !Ref PatientCheckoutSNSTopic
       Events:
         PatientCheckout:
           Type: S3
@@ -32,9 +32,13 @@ Resources:
       Policies:
         - S3ReadPolicy:
             BucketName:  !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt PatientCheckoutSNSTopic.TopicName
 
   PatientCheckoutS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
 
+  PatientCheckoutSNSTopic:
+    Type: AWS::SNS::Topic
