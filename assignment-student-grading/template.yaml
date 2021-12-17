@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  assignment-student-grading
+
+  Sample SAM Template for assignment-student-grading
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+
+Resources:
+
+  StudentsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+
+  StudentsUpdateMonitoringFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: StudentsGrading
+      Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.StudentUpdateMonitoring::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Environment:
+        Variables:
+          STUDENTS_GRADE_TOPIC: !Ref StudentsGradeTopic
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt StudentsGradeTopic.TopicName
+      Events:
+        S3StudentsUpdateEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref StudentsBucket
+            Events: s3:ObjectCreated:*
+
+  StudentsGradeTopic:
+    Type: AWS::SNS::Topic
+
+  StudentsGradeLoggingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: StudentsGrading
+      Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.StudentGradeLogging::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Events:
+        SNSStudentsGradeEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref StudentsGradeTopic
+
+
+
