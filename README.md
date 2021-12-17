@@ -68,3 +68,24 @@ Serverless using AWS Lambda for Java Developers - Tutorial from Bharath Thippire
    -  input POJO
    -  `aws lambda invoke --cli-binary-format raw-in-base64-out --invocation-type RequestResponse --function-name parameters-and-types-stack-GetClinicalDataFunction-biyr6RLO7sGj --payload file://events/event-pojos.json outputfile.txt`
 
+#####  Gateway to DynamoDB implementation without Lambda
+
+Timing compare:
+1.  Lambda-less approach
+   -  Create new order
+      -  First request
+         -  `Response code: 201 (Created); Time: 455ms; Content length: 2 bytes`
+      -  Other requests
+         -  `Response code: 201 (Created); Time: 241ms; Content length: 2 bytes`
+   -  Read all orders
+      -  `Response code: 200 (OK); Time: 262ms; Content length: 537 bytes`
+2.  Lambda approach
+   -  Create new order
+      -  First request
+         -  `Response code: 200 (OK); Time: 10993ms; Content length: 18 bytes    <-  COLD start`
+      -  Other requests
+         -  `Response code: 200 (OK); Time: 277ms; Content length: 18 bytes`
+   -  Read all orders
+      -  `Response code: 200 (OK); Time: 9628ms; Content length: 656 bytes   <- COLD start`
+      -  `Response code: 200 (OK); Time: 386ms; Content length: 656 bytes`
+
