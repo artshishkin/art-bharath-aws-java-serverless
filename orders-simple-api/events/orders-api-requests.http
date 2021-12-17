@@ -1,0 +1,17 @@
+### Create an order
+POST  https://r517xefhu9.execute-api.eu-north-1.amazonaws.com/Prod/orders
+Content-Type: application/json
+
+{
+  "id": {{$randomInt}},
+  "itemName": "milk",
+  "quantity": {{$randomInt}}
+}
+
+### Read all orders
+GET  https://r517xefhu9.execute-api.eu-north-1.amazonaws.com/Prod/orders
+Accept: application/json
+
+
+
+

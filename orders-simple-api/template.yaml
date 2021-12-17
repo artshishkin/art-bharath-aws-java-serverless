@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  orders-simple-api
+
+  Sample SAM Template for orders-simple-api
+
+Resources:
+
+  OrdersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  OrdersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: Orders API
+      Description: Orders API for Gateway-DynamoDB SAM Example
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: Orders API-Prod-oas30-apigateway.yaml
+
+  OrdersAPIGatewayRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+      Policies:
+        - PolicyName: OrdersAPIDynamoDBPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'dynamodb:PutItem'
+                  - 'dynamodb:Scan'
+                # Including * in the resource Arn allows access to the DynamoDB table and indexes
+                Resource: !Sub
+                  - '${varTableArn}*'
+                  - varTableArn: !GetAtt OrdersTable.Arn
+
+Outputs:
+  OrdersApi:
+    Description: "API Gateway endpoint URL for Prod stage for create and get orders endpoints"
+    Value: !Sub "https://${OrdersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/orders"
+
