@@ -3,25 +3,33 @@ package net.shyshkin.study.aws.serverless.s3sns.assignment;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.sns.AmazonSNSAsync;
-import com.amazonaws.services.sns.AmazonSNSAsyncClientBuilder;
 import com.google.gson.Gson;
 import net.shyshkin.study.aws.serverless.s3sns.assignment.model.Student;
 import net.shyshkin.study.aws.serverless.s3sns.assignment.model.StudentWithGrade;
+import software.amazon.awssdk.core.BytesWrapper;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
+import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.sns.SnsAsyncClient;
 
-import java.io.InputStreamReader;
-import java.util.stream.Stream;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Handler for requests to Lambda function.
  */
 public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
 
-    private final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
     private final Gson gson = new Gson();
-    private final AmazonSNSAsync sns = AmazonSNSAsyncClientBuilder.defaultClient();
+
+    private final SdkAsyncHttpClient httpClient = initHttpClient();
+    private final S3AsyncClient s3 = initS3();
+    private final SnsAsyncClient sns = initSns();
     private final String topicArn = System.getenv("STUDENTS_GRADE_TOPIC");
 
     @Override
@@ -29,11 +37,28 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
 
         input.getRecords()
                 .stream()
-                .map(record -> s3.getObject(record.getS3().getBucket().getName(), record.getS3().getObject().getKey()))
-                .map(s3Object -> gson.fromJson(new InputStreamReader(s3Object.getObjectContent()), Student[].class))
-                .flatMap(Stream::of)
-                .map(st -> new StudentWithGrade(st.roleNumber, st.name, st.testScore, calcGrade(st.testScore)))
-                .forEach(st -> sns.publish(topicArn, gson.toJson(st)));
+                .map(record -> GetObjectRequest.builder()
+                        .bucket(record.getS3().getBucket().getName())
+                        .key(record.getS3().getObject().getKey())
+                        .build()
+                )
+                .map(request -> s3.getObject(request, AsyncResponseTransformer.toBytes()))
+                .map(
+                        cf -> cf.thenApply(BytesWrapper::asUtf8String)
+                                .thenApply(json -> List.of(gson.fromJson(json, Student[].class)))
+                                .thenApply(students -> students
+                                        .stream()
+                                        .map(st -> new StudentWithGrade(st.roleNumber, st.name, st.testScore, calcGrade(st.testScore)))
+                                        .collect(Collectors.toList()))
+                                .thenCompose(grades ->
+                                        CompletableFuture.allOf(
+                                                grades.stream()
+                                                        .map(st -> sns.publish(b -> b.topicArn(topicArn).message(gson.toJson(st))))
+                                                        .toArray(CompletableFuture[]::new)
+                                        )
+                                )
+                )
+                .forEach(CompletableFuture::join);
 
         return null;
     }
@@ -42,5 +67,27 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
         if (testScore > 90) return "A";
         if (testScore > 70) return "B";
         return "C";
+    }
+
+    private S3AsyncClient initS3() {
+
+        return S3AsyncClient.builder()
+                .httpClient(httpClient)
+                .region(Region.of(System.getenv("AWS_REGION")))
+                .build();
+    }
+
+    private SnsAsyncClient initSns() {
+        return SnsAsyncClient.builder()
+                .httpClient(httpClient)
+                .region(Region.of(System.getenv("AWS_REGION")))
+                .build();
+    }
+
+    private SdkAsyncHttpClient initHttpClient() {
+        return NettyNioAsyncHttpClient.builder()
+                .writeTimeout(Duration.ZERO)
+                .maxConcurrency(64)
+                .build();
     }
 }
