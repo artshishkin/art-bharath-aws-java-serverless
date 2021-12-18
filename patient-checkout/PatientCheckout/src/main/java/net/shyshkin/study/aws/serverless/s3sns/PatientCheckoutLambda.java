@@ -42,6 +42,7 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
                 .peek(patientCheckoutEvent -> context.getLogger().log(patientCheckoutEvent.toString()))
                 .map(this::toJson)
                 .filter(Objects::nonNull)
+                .peek(message -> System.out.println("Published to SNS: " + message))
                 .map(json -> sns.publish(topicArn, json))
                 .forEach(publishResult -> context.getLogger().log(publishResult.toString()));
         return null;
@@ -49,8 +50,13 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
 
     private List<PatientCheckoutEvent> toPatientCheckoutEvents(InputStream s3InputStream) {
         try {
-            return objectMapper.readValue(s3InputStream, checkoutEventsType);
+            System.out.println("Reading data from S3");
+            var patientCheckoutEvents = objectMapper.readValue(s3InputStream, checkoutEventsType);
+            System.out.println(patientCheckoutEvents);
+            s3InputStream.close();
+            return patientCheckoutEvents;
         } catch (IOException e) {
+            e.printStackTrace();
             return new ArrayList<>();
         }
     }
@@ -59,6 +65,7 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             return null;
         }
     }

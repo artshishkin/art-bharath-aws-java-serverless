@@ -1,0 +1,13 @@
+[
+	{
+		"firstName":"Artem",
+		"middleName":"Viktorovych",
+		"lastName":"Shyshkin",
+		"ssn": "123456789" 
+	},
+	{
+		"firstName":"Arina",
+		"middleName":"Artemivna",
+		"lastName":"Shyshkina",
+		"ssn": "123456781"
+	}
