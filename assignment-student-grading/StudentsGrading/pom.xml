@@ -123,6 +123,21 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>software.amazon.awssdk.crt:aws-crt</artifact>
+                                    <excludes>
+                                        <exclude>windows/**</exclude>
+                                        <exclude>osx/**</exclude>
+                                        <exclude>linux/armv6/**</exclude>
+                                        <exclude>linux/armv7/**</exclude>
+                                        <exclude>linux/armv8/**</exclude>
+                                        <exclude>linux/x86_32/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
