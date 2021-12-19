@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -61,7 +60,7 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
             return patientCheckoutEvents;
         } catch (IOException e) {
             logger.error("Exception is: ", e);
-            return new ArrayList<>();
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,7 +69,7 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             logger.error("Exception is: ", e);
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
