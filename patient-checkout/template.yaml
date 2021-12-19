@@ -31,9 +31,12 @@ Resources:
             Events: s3:ObjectCreated:*
       Policies:
         - S3ReadPolicy:
-            BucketName:  !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+            BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt PatientCheckoutSNSTopic.TopicName
+      DeadLetterQueue:
+        Type: SNS
+        TargetArn: !Ref PatientCheckoutDLQ
 
   PatientCheckoutS3Bucket:
     Type: AWS::S3::Bucket
@@ -41,6 +44,9 @@ Resources:
       BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
 
   PatientCheckoutSNSTopic:
+    Type: AWS::SNS::Topic
+
+  PatientCheckoutDLQ:
     Type: AWS::SNS::Topic
 
   BillManagementLambdaFunction:
@@ -58,3 +64,17 @@ Resources:
           Properties:
             Topic: !Ref PatientCheckoutSNSTopic
 
+  ErrorHandlerLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PatientCheckout
+      Handler: net.shyshkin.study.aws.serverless.s3sns.ErrorHandler::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Events:
+        DLQEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref PatientCheckoutDLQ
