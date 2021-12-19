@@ -6,7 +6,8 @@ import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.google.gson.Gson;
 import net.shyshkin.study.aws.serverless.s3sns.assignment.model.Student;
 import net.shyshkin.study.aws.serverless.s3sns.assignment.model.StudentWithGrade;
-import software.amazon.awssdk.core.BytesWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
  */
 public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
 
+    private static final Logger log = LoggerFactory.getLogger(StudentUpdateMonitoring.class);
+
     private final Gson gson = new Gson();
 
     private final SdkAsyncHttpClient httpClient = initHttpClient();
@@ -37,14 +40,23 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
 
         input.getRecords()
                 .stream()
+                .peek(record -> log.debug("File created/updated {}", record.getS3().getObject().getKey()))
                 .map(record -> GetObjectRequest.builder()
                         .bucket(record.getS3().getBucket().getName())
                         .key(record.getS3().getObject().getKey())
                         .build()
                 )
+                .peek(request -> log.debug("Start fetching data from s3: {}", request))
                 .map(request -> s3.getObject(request, AsyncResponseTransformer.toBytes()))
                 .map(
-                        cf -> cf.thenApply(BytesWrapper::asUtf8String)
+                        cf -> cf
+                                .thenApply(getObjectResponseResponseBytes ->
+                                        {
+                                            String studentsJson = getObjectResponseResponseBytes.asUtf8String();
+                                            log.debug("Data fetched from s3 bucket: {}", studentsJson);
+                                            return studentsJson;
+                                        }
+                                )
                                 .thenApply(json -> List.of(gson.fromJson(json, Student[].class)))
                                 .thenApply(students -> students
                                         .stream()
@@ -53,7 +65,12 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
                                 .thenCompose(grades ->
                                         CompletableFuture.allOf(
                                                 grades.stream()
-                                                        .map(st -> sns.publish(b -> b.topicArn(topicArn).message(gson.toJson(st))))
+                                                        .map(st -> sns
+                                                                .publish(b -> b.topicArn(topicArn).message(gson.toJson(st)))
+                                                                .thenAccept(response ->
+                                                                        log.debug("Response of publishing to SNS: {}", response)
+                                                                )
+                                                        )
                                                         .toArray(CompletableFuture[]::new)
                                         )
                                 )
