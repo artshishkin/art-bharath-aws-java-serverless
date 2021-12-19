@@ -113,5 +113,20 @@ AWS Recommendations:
 -  [Optimizing cold start performance for AWS Lambda](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/lambda-optimize-starttime.html)
 -  [Introducing AWS Common Runtime HTTP Client in the AWS SDK for Java 2.x](https://aws.amazon.com/blogs/developer/introducing-aws-common-runtime-http-client-in-the-aws-sdk-for-java-2-x/)
 
+#####  12.2 AWS Common Runtime HTTP Client
+
+1. With Netty-NIO-Client (netty-nio-client)
+    -  `2021-12-19 15:07:10.290 - 2021-12-19 13:07:10  [main] DEBUG StudentUpdateMonitoring - Start fetching data from s3: GetObjectRequest(Bucket=student-grading-stack-392971033516-eu-north-1, Key=studentData.json)`
+    -  `2021-12-19 15:07:17.109 - 2021-12-19 13:07:17  [aws-java-sdk-NettyEventLoop-0-2] DEBUG request - Received successful response: 200`
+    -  Cold S3 call took ~7s
+    -  `REPORT RequestId: d0a64632-a7fd-47d2-9f2a-947e6eb5929c	Duration: 9325.31 ms	Billed Duration: 9326 ms	Memory Size: 512 MB	Max Memory Used: 188 MB	Init Duration: 2825.91 ms`
+2.  With AWS Common Runtime HTTP Client (aws-crt-client)
+    -  `2021-12-19 16:20:23.407	- 2021-12-19 14:20:23  [main] DEBUG StudentUpdateMonitoring - Start fetching data from s3: GetObjectRequest(Bucket=student-grading-stack-392971033516-eu-north-1, Key=studentData.json)`
+    -  `2021-12-19 16:20:24.089	- 2021-12-19 14:20:24  [main] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=GET, protocol=https, host=student-grading-stack-392971033516-eu-north-1.s3.eu-north-1.amazonaws.com, port=443, encodedPath=/studentData.json, headers=[amz-sdk-invocation-id, User-Agent, x-amz-te], queryParameters=[])`
+    -  `2021-12-19 16:20:24.608	- 2021-12-19 14:20:24  [Thread-0] DEBUG request - Received successful response: 200`
+    -  `REPORT RequestId: 587303b8-90c4-4712-afdd-c9097e4106ab	Duration: 2234.34 ms	Billed Duration: 2235 ms	Memory Size: 512 MB	Max Memory Used: 155 MB	Init Duration: 2505.03 ms`
+
+
+
 
     

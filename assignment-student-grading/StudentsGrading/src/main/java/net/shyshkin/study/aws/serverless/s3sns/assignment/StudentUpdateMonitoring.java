@@ -12,7 +12,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
+import software.amazon.awssdk.http.crt.AwsCrtAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -107,9 +107,8 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
     }
 
     private SdkAsyncHttpClient initHttpClient() {
-        return NettyNioAsyncHttpClient.builder()
-                .writeTimeout(Duration.ZERO)
-                .maxConcurrency(64)
+        return AwsCrtAsyncHttpClient.builder()
+                .maxConcurrency(50)
                 .build();
     }
 }
