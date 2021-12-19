@@ -89,3 +89,16 @@ Timing compare:
       -  `Response code: 200 (OK); Time: 9628ms; Content length: 656 bytes   <- COLD start`
       -  `Response code: 200 (OK); Time: 386ms; Content length: 656 bytes`
 
+####  Section 8: Logging and Error Handling
+
+#####  94. Test Log4j logs
+
+-  Correct Data
+    -  `aws lambda invoke --cli-binary-format raw-in-base64-out --invocation-type Event --function-name patient-checkout-stack-PatientCheckoutLambdaFuncti-7lREXMY1aWxR --payload file://events/event.json outputfile.txt`
+-  Corrupt data
+    -  `aws lambda invoke --cli-binary-format raw-in-base64-out --invocation-type Event --function-name patient-checkout-stack-PatientCheckoutLambdaFuncti-7lREXMY1aWxR --payload file://events/event-corrupt.json outputfile.txt`
+-  View logs
+    -  `sam logs -n PatientCheckoutLambdaFunction --stack-name patient-checkout-stack`
+    -  `sam logs -n PatientCheckoutLambdaFunction --stack-name patient-checkout-stack -s "10min ago" -e "2min ago"`
+    -  `sam logs -n PatientCheckoutLambdaFunction --stack-name patient-checkout-stack --tail`
+
