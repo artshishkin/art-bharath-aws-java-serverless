@@ -102,3 +102,8 @@ Timing compare:
     -  `sam logs -n PatientCheckoutLambdaFunction --stack-name patient-checkout-stack -s "10min ago" -e "2min ago"`
     -  `sam logs -n PatientCheckoutLambdaFunction --stack-name patient-checkout-stack --tail`
 
+#####  Assignment 4.2: Corrupt Data Test (#11, #9)
+
+-  `aws lambda invoke --cli-binary-format raw-in-base64-out --invocation-type Event --function-name student-grading-stack-StudentsUpdateMonitoringFunc-dbf5rxuO6G22 --payload file://events/event-corrupt.json outputfile.txt`
+
+

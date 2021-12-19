@@ -67,3 +67,4 @@ hs_err_pid*
 dependency-reduced-pom.xml
 /parameters-and-types/outputfile.txt
 /patient-checkout/outputfile.txt
+/assignment-student-grading/outputfile.txt
