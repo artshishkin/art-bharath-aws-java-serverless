@@ -8,6 +8,8 @@ import net.shyshkin.study.aws.serverless.s3sns.assignment.model.Student;
 import net.shyshkin.study.aws.serverless.s3sns.assignment.model.StudentWithGrade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
@@ -16,7 +18,6 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.sns.SnsAsyncClient;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -34,6 +35,8 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
     private final S3AsyncClient s3 = initS3();
     private final SnsAsyncClient sns = initSns();
     private final String topicArn = System.getenv("STUDENTS_GRADE_TOPIC");
+
+    private final AwsCredentialsProvider credentialsProvider = EnvironmentVariableCredentialsProvider.create();
 
     @Override
     public Void handleRequest(S3Event input, Context context) {
@@ -91,6 +94,7 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
         return S3AsyncClient.builder()
                 .httpClient(httpClient)
                 .region(Region.of(System.getenv("AWS_REGION")))
+                .credentialsProvider(credentialsProvider)
                 .build();
     }
 
@@ -98,6 +102,7 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
         return SnsAsyncClient.builder()
                 .httpClient(httpClient)
                 .region(Region.of(System.getenv("AWS_REGION")))
+                .credentialsProvider(credentialsProvider)
                 .build();
     }
 
