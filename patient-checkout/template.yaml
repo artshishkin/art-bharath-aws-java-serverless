@@ -37,6 +37,8 @@ Resources:
       DeadLetterQueue:
         Type: SNS
         TargetArn: !Ref PatientCheckoutDLQ
+      EventInvokeConfig:
+        MaximumRetryAttempts: 1
 
   PatientCheckoutS3Bucket:
     Type: AWS::S3::Bucket
