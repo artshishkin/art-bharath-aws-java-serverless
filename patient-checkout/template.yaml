@@ -80,3 +80,23 @@ Resources:
           Type: SNS
           Properties:
             Topic: !Ref PatientCheckoutDLQ
+
+  ClaimManagementLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PatientCheckout
+      Handler: net.shyshkin.study.aws.serverless.sqs.ClaimManagementLambda::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Events:
+        ClaimSqsEvent:
+          Type: SQS
+          Properties:
+            BatchSize: 5
+            Queue: !GetAtt ClaimManagementQueue.Arn
+
+  ClaimManagementQueue:
+    Type: AWS::SQS::Queue
+
