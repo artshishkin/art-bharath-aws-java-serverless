@@ -16,7 +16,7 @@ import software.amazon.awssdk.http.crt.AwsCrtAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.sns.SnsAsyncClient;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,8 +33,8 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
 
     private final SdkAsyncHttpClient httpClient = initHttpClient();
     private final S3AsyncClient s3 = initS3();
-    private final SnsAsyncClient sns = initSns();
-    private final String topicArn = System.getenv("STUDENTS_GRADE_TOPIC");
+    private final SqsAsyncClient sqs = initSqs();
+    private final String queueUrl = System.getenv("STUDENTS_GRADE_QUEUE_URL");
 
     private final AwsCredentialsProvider credentialsProvider = EnvironmentVariableCredentialsProvider.create();
 
@@ -68,10 +68,10 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
                                 .thenCompose(grades ->
                                         CompletableFuture.allOf(
                                                 grades.stream()
-                                                        .map(st -> sns
-                                                                .publish(b -> b.topicArn(topicArn).message(asJson(st)))
+                                                        .map(st -> sqs
+                                                                .sendMessage(b -> b.queueUrl(queueUrl).messageBody(asJson(st)))
                                                                 .thenAccept(response ->
-                                                                        log.debug("Response of publishing to SNS: {}", response)
+                                                                        log.debug("Response of sending to SQS: {}", response)
                                                                 )
                                                         )
                                                         .toArray(CompletableFuture[]::new)
@@ -106,8 +106,8 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
                 .build();
     }
 
-    private SnsAsyncClient initSns() {
-        return SnsAsyncClient.builder()
+    private SqsAsyncClient initSqs() {
+        return SqsAsyncClient.builder()
                 .httpClient(httpClient)
                 .region(Region.of(System.getenv("AWS_REGION")))
                 .credentialsProvider(credentialsProvider)

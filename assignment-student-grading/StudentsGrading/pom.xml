@@ -59,7 +59,7 @@
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sns</artifactId>
+            <artifactId>sqs</artifactId>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
