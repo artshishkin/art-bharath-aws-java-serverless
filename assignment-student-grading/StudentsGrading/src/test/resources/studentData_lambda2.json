@@ -1,0 +1,17 @@
+[
+	{
+		"roleNumber":1234,
+		"name":"Art",
+		"testScore": 95
+	},
+	{
+		"roleNumber":1235,
+		"name":"Kate",
+		"testScore": 80
+	},
+	{
+		"roleNumber":1236,
+		"name":"Arina",
+		"testScore": 65
+	}
+]
