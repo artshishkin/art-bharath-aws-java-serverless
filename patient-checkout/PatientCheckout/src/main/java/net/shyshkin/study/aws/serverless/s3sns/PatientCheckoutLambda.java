@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
@@ -38,7 +39,10 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
     @Override
     public Void handleRequest(S3Event input, Context context) {
 
-        var batchRequestEntries = input.getRecords().stream()
+        final int BATCH_SIZE = 10;
+        final AtomicInteger counter = new AtomicInteger();
+
+        input.getRecords().stream()
                 .map(record -> s3.getObject(
                         record.getS3().getBucket().getName(),
                         record.getS3().getObject().getKey()))
@@ -48,21 +52,15 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
                 .peek(patientCheckoutEvent -> logger.info(patientCheckoutEvent.toString()))
                 .map(this::toJson)
                 .map(message -> new PublishBatchRequestEntry().withId(UUID.randomUUID().toString()).withMessage(message))
-                .collect(Collectors.toList());
-
-        int BATCH_SIZE = 9;
-        for (int startIndex = 0; startIndex < batchRequestEntries.size(); startIndex += BATCH_SIZE) {
-
-            int toIndex = Math.min(startIndex + BATCH_SIZE, batchRequestEntries.size());
-            var batch = batchRequestEntries.subList(startIndex, toIndex);
-
-            var publishBatchRequest = new PublishBatchRequest()
-                    .withTopicArn(topicArn)
-                    .withPublishBatchRequestEntries(batch);
-            logger.info("Publishing to SNS");
-            var publishBatchResult = sns.publishBatch(publishBatchRequest);
-            logger.info("SNS Response: {}", publishBatchResult);
-        }
+                .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / BATCH_SIZE))
+                .values()
+                .parallelStream()
+                .map(batch -> new PublishBatchRequest()
+                        .withTopicArn(topicArn)
+                        .withPublishBatchRequestEntries(batch))
+                .peek(request -> logger.info("Publishing to SNS {}", request.getPublishBatchRequestEntries().size()))
+                .map(sns::publishBatch)
+                .forEach(publishBatchResult -> logger.info("SNS Response: {}", publishBatchResult));
 
         return null;
     }
