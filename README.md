@@ -126,7 +126,24 @@ AWS Recommendations:
     -  `2021-12-19 16:20:24.608	- 2021-12-19 14:20:24  [Thread-0] DEBUG request - Received successful response: 200`
     -  `REPORT RequestId: 587303b8-90c4-4712-afdd-c9097e4106ab	Duration: 2234.34 ms	Billed Duration: 2235 ms	Memory Size: 512 MB	Max Memory Used: 155 MB	Init Duration: 2505.03 ms`
 
+####  10 Optimize patient-checkout-stack to publish to SNS asynchronously
+
+#####  10.1 Synchronous invocation in main thread
+
+```
+2021-12-20 14:41:04.111	START RequestId: ab5b8124-c26f-4e84-a47d-394e931f8936 Version: $LATEST
+2021-12-20 14:41:07.629	2021-12-20 12:41:07 [main] ab5b8124-c26f-4e84-a47d-394e931f8936 INFO  PatientCheckoutLambda - Reading data from S3
+2021-12-20 14:41:07.849	2021-12-20 12:41:07 [main] ab5b8124-c26f-4e84-a47d-394e931f8936 INFO  PatientCheckoutLambda - PatientCheckoutEvent{firstName='Artem-01', middleName='Viktorovych', lastName='Shyshkin', ssn='123456789'}
+2021-12-20 14:41:08.110	2021-12-20 12:41:08 [main] ab5b8124-c26f-4e84-a47d-394e931f8936 INFO  PatientCheckoutLambda - Published to SNS: {"firstName":"Artem-01","middleName":"Viktorovych","lastName":"Shyshkin","ssn":"123456789"}
+2021-12-20 14:41:09.509	2021-12-20 12:41:09 [main] ab5b8124-c26f-4e84-a47d-394e931f8936 INFO  PatientCheckoutLambda - {MessageId: f0b59fb1-1da8-5b16-9d0c-c58b618d5a0f,}    
+.
+.
+.
+2021-12-20 14:41:10.387	2021-12-20 12:41:10 [main] ab5b8124-c26f-4e84-a47d-394e931f8936 INFO  PatientCheckoutLambda - PatientCheckoutEvent{firstName='Arina-20', middleName='Artemivna', lastName='Shyshkina', ssn='123456781'}
+2021-12-20 14:41:10.388	2021-12-20 12:41:10 [main] ab5b8124-c26f-4e84-a47d-394e931f8936 INFO  PatientCheckoutLambda - Published to SNS: {"firstName":"Arina-20","middleName":"Artemivna","lastName":"Shyshkina","ssn":"123456781"}
+2021-12-20 14:41:10.411	2021-12-20 12:41:10 [main] ab5b8124-c26f-4e84-a47d-394e931f8936 INFO  PatientCheckoutLambda - {MessageId: a82f0c67-166a-5adb-b5d9-565d6a4c4bc2,}
+2021-12-20 14:41:10.412	END RequestId: ab5b8124-c26f-4e84-a47d-394e931f8936
+2021-12-20 14:41:10.412	REPORT RequestId: ab5b8124-c26f-4e84-a47d-394e931f8936	Duration: 6300.03 ms	Billed Duration: 6301 ms	Memory Size: 512 MB	Max Memory Used: 174 MB	Init Duration: 3448.52 ms
+```
 
 
-
-    
