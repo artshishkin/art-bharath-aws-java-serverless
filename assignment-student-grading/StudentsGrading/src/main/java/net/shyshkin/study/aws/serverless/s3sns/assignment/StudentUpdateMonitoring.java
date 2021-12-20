@@ -87,7 +87,7 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
             return JSON.std.asString(st);
         } catch (IOException e) {
             log.error("Exception occurred: ", e);
-            return "{}";
+            throw new RuntimeException(e);
         }
     }
 
@@ -96,7 +96,7 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
             return List.of(JSON.std.beanFrom(Student[].class, json));
         } catch (IOException e) {
             log.error("Exception occurred: ", e);
-            return List.of();
+            throw new RuntimeException(e);
         }
     }
 

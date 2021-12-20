@@ -9,6 +9,11 @@ Description: >
 Globals:
   Function:
     Timeout: 20
+    CodeUri: StudentsGrading/target/students-grading-1.0.jar
+    Runtime: java11
+    Architectures:
+      - x86_64
+    MemorySize: 512
 
 Resources:
 
@@ -20,12 +25,8 @@ Resources:
   StudentsUpdateMonitoringFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: StudentsGrading/target/students-grading-1.0.jar
       Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.StudentUpdateMonitoring::handleRequest
       Runtime: java11
-      Architectures:
-        - x86_64
-      MemorySize: 512
       Environment:
         Variables:
           STUDENTS_GRADE_TOPIC: !Ref StudentsGradeTopic
@@ -40,24 +41,38 @@ Resources:
           Properties:
             Bucket: !Ref StudentsBucket
             Events: s3:ObjectCreated:*
+      DeadLetterQueue:
+        Type: SNS
+        TargetArn: !Ref StudentsGradeDLQ
+      EventInvokeConfig:
+        MaximumRetryAttempts: 0
 
   StudentsGradeTopic:
+    Type: AWS::SNS::Topic
+
+  StudentsGradeDLQ:
     Type: AWS::SNS::Topic
 
   StudentsGradeLoggingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: StudentsGrading/target/students-grading-1.0.jar
       Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.StudentGradeLogging::handleRequest
-      Runtime: java11
-      Architectures:
-        - x86_64
-      MemorySize: 512
       Events:
         SNSStudentsGradeEvent:
           Type: SNS
           Properties:
             Topic: !Ref StudentsGradeTopic
+
+  ErrorHandlingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.ErrorHandler::handleRequest
+      Events:
+        DLQEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref StudentsGradeDLQ
+
 
 
 
