@@ -207,3 +207,19 @@ AWS Recommendations:
 ```
 2021-12-20 17:13:22.632	REPORT RequestId: c58ffacd-4bbf-4b3f-8013-8ad968290134	Duration: 4481.32 ms	Billed Duration: 4482 ms	Memory Size: 512 MB	Max Memory Used: 163 MB	Init Duration: 3357.61 ms
 ```
+
+####  Comparing SNS vs SQS in student-grade-stack (#14)
+
+1.  StudentUpdateMonitoringFunction
+    -  SNS
+        -  `2021-12-20 15:35:46.399	REPORT RequestId: 485f5d28-f515-4b19-8dc5-13abfcdce37c	Duration: 3517.01 ms	Billed Duration: 3518 ms	Memory Size: 512 MB	Max Memory Used: 163 MB	Init Duration: 2520.09 ms`
+    -  SQS
+        -  `2021-12-20 18:37:03.457	REPORT RequestId: 397f41a7-dafb-4e36-a70b-32c0ad64d49e	Duration: 3743.90 ms	Billed Duration: 3744 ms	Memory Size: 512 MB	Max Memory Used: 159 MB	Init Duration: 2526.76 ms`
+2.  StudentGradeLogging
+    -  SNS - 20 separate Lambdas
+        -  `REPORT RequestId: 5955a576-fa34-4a55-af67-c2613d1a5a23	Duration: 637.29 ms	Billed Duration: 638 ms	Memory Size: 512 MB	Max Memory Used: 113 MB	Init Duration: 1584.99 ms`
+        -  `REPORT RequestId: 05e7d88f-e156-41eb-a141-3d459ca21b8d	Duration: 508.33 ms	Billed Duration: 509 ms	Memory Size: 512 MB	Max Memory Used: 112 MB	Init Duration: 1693.13 ms`
+        -  Total billed: ~550*20=11000ms
+    -  SQS - 7 separate Lambdas
+        -  `REPORT RequestId: fa3ddabe-67c3-5790-b115-8084d4a08156	Duration: 296.63 ms	Billed Duration: 297 ms	Memory Size: 512 MB	Max Memory Used: 109 MB	Init Duration: 1700.32 ms`
+        -  Total: 227+339+30+298+355+11+421+19+3+308+309 = 2320ms  
