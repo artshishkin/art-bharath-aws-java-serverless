@@ -191,3 +191,18 @@ AWS Recommendations:
 2021-12-20 15:35:46.399	REPORT RequestId: 485f5d28-f515-4b19-8dc5-13abfcdce37c	Duration: 3517.01 ms	Billed Duration: 3518 ms	Memory Size: 512 MB	Max Memory Used: 163 MB	Init Duration: 2520.09 ms
 ```
 
+#####  10.4 Parallel stream (but no ForkJoinPool)
+
+```
+2021-12-20 15:53:56.955	START RequestId: 2c74d5d2-38ba-455c-8c65-3e57cd6cbfa9 Version: $LATEST
+2021-12-20 15:54:00.236	2021-12-20 13:54:00 [main] 2c74d5d2-38ba-455c-8c65-3e57cd6cbfa9 INFO  PatientCheckoutLambda - Reading data from S3
+...
+2021-12-20 15:54:02.173	2021-12-20 13:54:02 [main] 2c74d5d2-38ba-455c-8c65-3e57cd6cbfa9 INFO  PatientCheckoutLambda - SNS Response: {MessageId: 874e5085-e2d3-5f4a-8512-0abf6fe93a58,}
+2021-12-20 15:54:02.175	END RequestId: 2c74d5d2-38ba-455c-8c65-3e57cd6cbfa9
+2021-12-20 15:54:02.175	REPORT RequestId: 2c74d5d2-38ba-455c-8c65-3e57cd6cbfa9	Duration: 5219.30 ms	Billed Duration: 5220 ms	Memory Size: 512 MB	Max Memory Used: 165 MB	Init Duration: 3460.38 ms
+```
+
+
+
+
+

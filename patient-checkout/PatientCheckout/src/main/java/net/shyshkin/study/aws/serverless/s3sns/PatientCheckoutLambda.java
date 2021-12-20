@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
 
@@ -38,7 +36,7 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
     @Override
     public Void handleRequest(S3Event input, Context context) {
 
-        List<CompletableFuture<PublishResult>> futures = input.getRecords().stream()
+        input.getRecords().stream()
                 .map(record -> s3.getObject(
                         record.getS3().getBucket().getName(),
                         record.getS3().getObject().getKey()))
@@ -48,15 +46,12 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
                 .peek(patientCheckoutEvent -> logger.info(patientCheckoutEvent.toString()))
                 .map(this::toJson)
                 .filter(Objects::nonNull)
-                .map(json -> CompletableFuture.supplyAsync(() -> {
+                .parallel()
+                .forEach(json -> {
                     logger.info("Publishing to SNS: " + json);
                     PublishResult publishResult = sns.publish(topicArn, json);
                     logger.info("SNS Response: {}", publishResult);
-                    return publishResult;
-                }))
-                .collect(Collectors.toList());
-
-        futures.forEach(CompletableFuture::join);
+                });
         return null;
     }
 
