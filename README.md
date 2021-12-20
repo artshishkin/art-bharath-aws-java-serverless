@@ -202,7 +202,8 @@ AWS Recommendations:
 2021-12-20 15:54:02.175	REPORT RequestId: 2c74d5d2-38ba-455c-8c65-3e57cd6cbfa9	Duration: 5219.30 ms	Billed Duration: 5220 ms	Memory Size: 512 MB	Max Memory Used: 165 MB	Init Duration: 3460.38 ms
 ```
 
+#####  10.5 PublishBatchRequest - subList 
 
-
-
-
+```
+2021-12-20 17:13:22.632	REPORT RequestId: c58ffacd-4bbf-4b3f-8013-8ad968290134	Duration: 4481.32 ms	Billed Duration: 4482 ms	Memory Size: 512 MB	Max Memory Used: 163 MB	Init Duration: 3357.61 ms
+```

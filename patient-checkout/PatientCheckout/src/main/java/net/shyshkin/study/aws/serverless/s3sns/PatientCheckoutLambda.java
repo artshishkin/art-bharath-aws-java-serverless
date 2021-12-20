@@ -8,7 +8,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
-import com.amazonaws.services.sns.model.PublishResult;
+import com.amazonaws.services.sns.model.PublishBatchRequest;
+import com.amazonaws.services.sns.model.PublishBatchRequestEntry;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
 
@@ -36,7 +38,7 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
     @Override
     public Void handleRequest(S3Event input, Context context) {
 
-        input.getRecords().stream()
+        var batchRequestEntries = input.getRecords().stream()
                 .map(record -> s3.getObject(
                         record.getS3().getBucket().getName(),
                         record.getS3().getObject().getKey()))
@@ -45,13 +47,23 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
                 .flatMap(Collection::stream)
                 .peek(patientCheckoutEvent -> logger.info(patientCheckoutEvent.toString()))
                 .map(this::toJson)
-                .filter(Objects::nonNull)
-                .parallel()
-                .forEach(json -> {
-                    logger.info("Publishing to SNS: " + json);
-                    PublishResult publishResult = sns.publish(topicArn, json);
-                    logger.info("SNS Response: {}", publishResult);
-                });
+                .map(message -> new PublishBatchRequestEntry().withId(UUID.randomUUID().toString()).withMessage(message))
+                .collect(Collectors.toList());
+
+        int BATCH_SIZE = 9;
+        for (int startIndex = 0; startIndex < batchRequestEntries.size(); startIndex += BATCH_SIZE) {
+
+            int toIndex = Math.min(startIndex + BATCH_SIZE, batchRequestEntries.size());
+            var batch = batchRequestEntries.subList(startIndex, toIndex);
+
+            var publishBatchRequest = new PublishBatchRequest()
+                    .withTopicArn(topicArn)
+                    .withPublishBatchRequestEntries(batch);
+            logger.info("Publishing to SNS");
+            var publishBatchResult = sns.publishBatch(publishBatchRequest);
+            logger.info("SNS Response: {}", publishBatchResult);
+        }
+
         return null;
     }
 
