@@ -3,7 +3,7 @@ package net.shyshkin.study.aws.serverless.s3sns.assignment;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
-import com.fasterxml.jackson.jr.ob.JSON;
+import com.google.gson.Gson;
 import net.shyshkin.study.aws.serverless.s3sns.assignment.model.Student;
 import net.shyshkin.study.aws.serverless.s3sns.assignment.model.StudentWithGrade;
 import org.slf4j.Logger;
@@ -18,7 +18,6 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.sns.SnsAsyncClient;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -29,6 +28,8 @@ import java.util.stream.Collectors;
 public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
 
     private static final Logger log = LoggerFactory.getLogger(StudentUpdateMonitoring.class);
+
+    private final Gson gson = new Gson();
 
     private final SdkAsyncHttpClient httpClient = initHttpClient();
     private final S3AsyncClient s3 = initS3();
@@ -83,21 +84,11 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
     }
 
     private String asJson(StudentWithGrade st) {
-        try {
-            return JSON.std.asString(st);
-        } catch (IOException e) {
-            log.error("Exception occurred: ", e);
-            throw new RuntimeException(e);
-        }
+        return gson.toJson(st);
     }
 
     private List<Student> toStudents(String json) {
-        try {
-            return List.of(JSON.std.beanFrom(Student[].class, json));
-        } catch (IOException e) {
-            log.error("Exception occurred: ", e);
-            throw new RuntimeException(e);
-        }
+        return List.of(gson.fromJson(json, Student[].class));
     }
 
     private String calcGrade(int testScore) {
