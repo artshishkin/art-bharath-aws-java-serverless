@@ -146,4 +146,19 @@ AWS Recommendations:
 2021-12-20 14:41:10.412	REPORT RequestId: ab5b8124-c26f-4e84-a47d-394e931f8936	Duration: 6300.03 ms	Billed Duration: 6301 ms	Memory Size: 512 MB	Max Memory Used: 174 MB	Init Duration: 3448.52 ms
 ```
 
+#####  10.2 Synchronous client invoked on many threads
+
+```
+2021-12-20 15:18:16.077	START RequestId: 2b404889-728a-44db-ac5b-ed6d3c795b6e Version: $LATEST
+2021-12-20 15:18:19.633	2021-12-20 13:18:19 [main] 2b404889-728a-44db-ac5b-ed6d3c795b6e INFO  PatientCheckoutLambda - Reading data from S3
+.
+.
+.
+2021-12-20 15:18:27.734	2021-12-20 13:18:27 [Thread-16]  INFO  PatientCheckoutLambda - SNS Response: {MessageId: 7449bb86-302c-5730-9b06-e1bcb4cfc0c7,}
+2021-12-20 15:18:27.734	2021-12-20 13:18:27 [Thread-2]  INFO  PatientCheckoutLambda - SNS Response: {MessageId: 578f2a5a-7cdd-5049-917c-7060f83f77be,}
+2021-12-20 15:18:27.734	2021-12-20 13:18:27 [Thread-14]  INFO  PatientCheckoutLambda - SNS Response: {MessageId: ac56cec5-a868-588c-8c5e-94ff2c8aa317,}
+2021-12-20 15:18:27.754	END RequestId: 2b404889-728a-44db-ac5b-ed6d3c795b6e
+2021-12-20 15:18:27.754	REPORT RequestId: 2b404889-728a-44db-ac5b-ed6d3c795b6e	Duration: 11676.26 ms	Billed Duration: 11677 ms	Memory Size: 512 MB	Max Memory Used: 185 MB	Init Duration: 3425.30 ms
+```
+
 

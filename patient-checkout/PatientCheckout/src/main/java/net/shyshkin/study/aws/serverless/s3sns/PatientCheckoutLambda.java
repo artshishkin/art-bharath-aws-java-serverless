@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import com.amazonaws.services.sns.model.PublishResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,8 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
 
@@ -35,7 +38,7 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
     @Override
     public Void handleRequest(S3Event input, Context context) {
 
-        input.getRecords().stream()
+        List<CompletableFuture<PublishResult>> futures = input.getRecords().stream()
                 .map(record -> s3.getObject(
                         record.getS3().getBucket().getName(),
                         record.getS3().getObject().getKey()))
@@ -45,9 +48,15 @@ public class PatientCheckoutLambda implements RequestHandler<S3Event, Void> {
                 .peek(patientCheckoutEvent -> logger.info(patientCheckoutEvent.toString()))
                 .map(this::toJson)
                 .filter(Objects::nonNull)
-                .peek(message -> logger.info("Published to SNS: " + message))
-                .map(json -> sns.publish(topicArn, json))
-                .forEach(publishResult -> logger.info(publishResult.toString()));
+                .map(json -> CompletableFuture.supplyAsync(() -> {
+                    logger.info("Publishing to SNS: " + json);
+                    PublishResult publishResult = sns.publish(topicArn, json);
+                    logger.info("SNS Response: {}", publishResult);
+                    return publishResult;
+                }))
+                .collect(Collectors.toList());
+
+        futures.forEach(CompletableFuture::join);
         return null;
     }
 
