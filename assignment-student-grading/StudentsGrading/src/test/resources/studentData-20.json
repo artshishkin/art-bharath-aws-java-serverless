@@ -1,0 +1,102 @@
+[
+	{
+		"roleNumber":1234,
+		"name":"Art01",
+		"testScore": 95
+	},
+	{
+		"roleNumber":1235,
+		"name":"Kate02",
+		"testScore": 80
+	},
+	{
+		"roleNumber":1236,
+		"name":"Arina03",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1237,
+		"name":"Nazar04",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1234,
+		"name":"Art05",
+		"testScore": 95
+	},
+	{
+		"roleNumber":1235,
+		"name":"Kate06",
+		"testScore": 80
+	},
+	{
+		"roleNumber":1236,
+		"name":"Arina07",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1237,
+		"name":"Nazar08",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1234,
+		"name":"Art09",
+		"testScore": 95
+	},
+	{
+		"roleNumber":1235,
+		"name":"Kate10",
+		"testScore": 80
+	},
+	{
+		"roleNumber":1236,
+		"name":"Arina11",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1237,
+		"name":"Nazar12",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1234,
+		"name":"Art13",
+		"testScore": 95
+	},
+	{
+		"roleNumber":1235,
+		"name":"Kate14",
+		"testScore": 80
+	},
+	{
+		"roleNumber":1236,
+		"name":"Arina15",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1237,
+		"name":"Nazar16",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1234,
+		"name":"Art17",
+		"testScore": 95
+	},
+	{
+		"roleNumber":1235,
+		"name":"Kate18",
+		"testScore": 80
+	},
+	{
+		"roleNumber":1236,
+		"name":"Arina19",
+		"testScore": 65
+	},
+	{
+		"roleNumber":1237,
+		"name":"Nazar20",
+		"testScore": 65
+	}
+]

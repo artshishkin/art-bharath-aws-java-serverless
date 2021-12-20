@@ -161,4 +161,33 @@ AWS Recommendations:
 2021-12-20 15:18:27.754	REPORT RequestId: 2b404889-728a-44db-ac5b-ed6d3c795b6e	Duration: 11676.26 ms	Billed Duration: 11677 ms	Memory Size: 512 MB	Max Memory Used: 185 MB	Init Duration: 3425.30 ms
 ```
 
+#####  10.3 Comparing with asynchronous client in students-grading-stack
+
+```
+2021-12-20 15:35:42.882	START RequestId: 485f5d28-f515-4b19-8dc5-13abfcdce37c Version: $LATEST
+2021-12-20 15:35:43.221	2021-12-20 13:35:43  [main] DEBUG StudentUpdateMonitoring - File created/updated studentData-20.json
+2021-12-20 15:35:43.320	2021-12-20 13:35:43  [main] DEBUG StudentUpdateMonitoring - Start fetching data from s3: GetObjectRequest(Bucket=student-grading-stack-392971033516-eu-north-1, Key=studentData-20.json)
+2021-12-20 15:35:44.080	2021-12-20 13:35:44  [main] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=GET, protocol=https, host=student-grading-stack-392971033516-eu-north-1.s3.eu-north-1.amazonaws.com, port=443, encodedPath=/studentData-20.json, headers=[amz-sdk-invocation-id, User-Agent, x-amz-te], queryParameters=[])
+2021-12-20 15:35:44.704	2021-12-20 13:35:44  [Thread-0] DEBUG request - Received successful response: 200
+2021-12-20 15:35:45.022	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG StudentUpdateMonitoring - Data fetched from s3 bucket: [
+...
+2021-12-20 15:35:45.302	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.321	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.341	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.360	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.441	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.461	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.480	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.482	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.500	2021-12-20 13:35:45  [Thread-0] DEBUG request - Received successful response: 200
+2021-12-20 15:35:45.501	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+2021-12-20 15:35:45.520	2021-12-20 13:35:45  [sdk-async-response-0-0] DEBUG request - Sending Request: DefaultSdkHttpFullRequest(httpMethod=POST, protocol=https, host=sns.eu-north-1.amazonaws.com, encodedPath=, headers=[amz-sdk-invocation-id, Content-Length, Content-Type, User-Agent], queryParameters=[])
+...
+2021-12-20 15:35:46.339	2021-12-20 13:35:46  [sdk-async-response-2-7] DEBUG StudentUpdateMonitoring - Response of publishing to SNS: PublishResponse(MessageId=dbf29833-adf3-56ea-9ece-c2092501aeb2)
+2021-12-20 15:35:46.361	2021-12-20 13:35:46  [sdk-async-response-2-3] DEBUG StudentUpdateMonitoring - Response of publishing to SNS: PublishResponse(MessageId=2307ed26-4f4c-5221-a86e-b71cc7be7418)
+2021-12-20 15:35:46.361	2021-12-20 13:35:46  [Thread-1] DEBUG request - Received successful response: 200
+2021-12-20 15:35:46.379	2021-12-20 13:35:46  [sdk-async-response-2-2] DEBUG StudentUpdateMonitoring - Response of publishing to SNS: PublishResponse(MessageId=230482fc-05c3-5e29-a846-d8c68d315e31)
+2021-12-20 15:35:46.399	END RequestId: 485f5d28-f515-4b19-8dc5-13abfcdce37c
+2021-12-20 15:35:46.399	REPORT RequestId: 485f5d28-f515-4b19-8dc5-13abfcdce37c	Duration: 3517.01 ms	Billed Duration: 3518 ms	Memory Size: 512 MB	Max Memory Used: 163 MB	Init Duration: 2520.09 ms
+```
 
