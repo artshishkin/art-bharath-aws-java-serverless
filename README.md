@@ -223,3 +223,15 @@ AWS Recommendations:
     -  SQS - 7 separate Lambdas
         -  `REPORT RequestId: fa3ddabe-67c3-5790-b115-8084d4a08156	Duration: 296.63 ms	Billed Duration: 297 ms	Memory Size: 512 MB	Max Memory Used: 109 MB	Init Duration: 1700.32 ms`
         -  Total: 227+339+30+298+355+11+421+19+3+308+309 = 2320ms  
+
+#####  SQS Batch send in student-grade-stack (#14)
+
+1.  StudentUpdateMonitoringFunction
+    -  Cold Start    
+        -  `REPORT RequestId: bd366c6e-9e14-4fce-9cee-9aafea7ac2b8	Duration: 2957.89 ms	Billed Duration: 2958 ms	Memory Size: 512 MB	Max Memory Used: 156 MB	Init Duration: 2420.22 ms`
+    -  Hot Start    
+        -  `REPORT RequestId: 6a71f0d6-b386-4985-ab00-ff342eae706a	Duration: 319.02 ms	Billed Duration: 320 ms	Memory Size: 512 MB	Max Memory Used: 156 MB`
+2.  StudentGradeLogging
+    -  Cold Start: 343+406+343+263+329 = 1684ms
+    -  Hot Start: 3+24+9+24+3 = 63ms
+    

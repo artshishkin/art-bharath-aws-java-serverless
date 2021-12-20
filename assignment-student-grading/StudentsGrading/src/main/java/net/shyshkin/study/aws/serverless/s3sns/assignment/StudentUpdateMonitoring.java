@@ -17,9 +17,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +43,9 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
 
     @Override
     public Void handleRequest(S3Event input, Context context) {
+
+        final int BATCH_SIZE = 10;
+        final AtomicInteger counter = new AtomicInteger(0);
 
         input.getRecords()
                 .stream()
@@ -64,18 +70,22 @@ public class StudentUpdateMonitoring implements RequestHandler<S3Event, Void> {
                                 .thenApply(students -> students
                                         .stream()
                                         .map(st -> new StudentWithGrade(st.roleNumber, st.name, st.testScore, calcGrade(st.testScore)))
-                                        .collect(Collectors.toList()))
-                                .thenCompose(grades ->
-                                        CompletableFuture.allOf(
+                                        .map(grade -> SendMessageBatchRequestEntry.builder()
+                                                .id(UUID.randomUUID().toString())
+                                                .messageBody(asJson(grade))
+                                                .build()
+                                        )
+                                        .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / BATCH_SIZE))
+                                        .values()
+                                )
+                                .thenCompose(grades -> CompletableFuture
+                                        .allOf(
                                                 grades.stream()
                                                         .map(st -> sqs
-                                                                .sendMessage(b -> b.queueUrl(queueUrl).messageBody(asJson(st)))
-                                                                .thenAccept(response ->
-                                                                        log.debug("Response of sending to SQS: {}", response)
-                                                                )
+                                                                .sendMessageBatch(b -> b.queueUrl(queueUrl).entries(st))
+                                                                .thenAccept(response -> log.debug("Response of sending to SQS: {}", response))
                                                         )
-                                                        .toArray(CompletableFuture[]::new)
-                                        )
+                                                        .toArray(CompletableFuture[]::new))
                                 )
                 )
                 .forEach(CompletableFuture::join);
