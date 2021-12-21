@@ -29,6 +29,7 @@ Resources:
         - !Ref S3SQSLambdaLayer
         - !Ref LoggingLambdaLayer
         - !Ref LambdaCoreLambdaLayer
+        - !Ref MappingLambdaLayer
       Environment:
         Variables:
           STUDENTS_GRADE_QUEUE_URL: !Ref StudentsGradeQueue
@@ -63,6 +64,7 @@ Resources:
       Layers:
         - !Ref LoggingLambdaLayer
         - !Ref LambdaCoreLambdaLayer
+        - !Ref MappingLambdaLayer
       Events:
         SQSStudentsGradeEvent:
           Type: SQS
@@ -102,6 +104,13 @@ Resources:
     Type: AWS::Serverless::LayerVersion
     Properties:
       ContentUri: StudentsGrading/lambda-core-lambda-layer/target/lambda-core-lambda-layer.zip
+      CompatibleRuntimes:
+        - java11
+
+  MappingLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: StudentsGrading/mapping-lambda-layer/target/mapping-lambda-layer.zip
       CompatibleRuntimes:
         - java11
 

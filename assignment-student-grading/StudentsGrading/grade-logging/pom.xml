@@ -19,13 +19,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+            <groupId>net.shyshkin.study.aws.serverless.s3sns.assignment</groupId>
+            <artifactId>lambda-core-lambda-layer</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.shyshkin.study.aws.serverless.s3sns.assignment</groupId>
-            <artifactId>lambda-core-lambda-layer</artifactId>
+            <artifactId>mapping-lambda-layer</artifactId>
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>
