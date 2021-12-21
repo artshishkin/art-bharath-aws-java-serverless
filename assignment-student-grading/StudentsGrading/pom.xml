@@ -10,6 +10,7 @@
         <module>update-monitoring</module>
         <module>grade-logging</module>
         <module>error-handling</module>
+        <module>logging-lambda-layer</module>
     </modules>
     <packaging>pom</packaging>
     <name>StudentsGrading</name>
