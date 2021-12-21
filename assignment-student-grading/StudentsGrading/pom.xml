@@ -6,13 +6,10 @@
     <version>1.0</version>
     <modules>
         <module>model</module>
-        <module>s3sqs-lambda-layer</module>
         <module>update-monitoring</module>
         <module>grade-logging</module>
         <module>error-handling</module>
-        <module>logging-lambda-layer</module>
-        <module>lambda-core-lambda-layer</module>
-        <module>mapping-lambda-layer</module>
+        <module>layers</module>
     </modules>
     <packaging>pom</packaging>
     <name>StudentsGrading</name>

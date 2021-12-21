@@ -13,7 +13,7 @@
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>./java/lib</outputDirectory>
             <includes>
-                <include>logging-lambda-layer*.jar</include>
+                <include>${artifactId}*.jar</include>
             </includes>
         </fileSet>
     </fileSets>

@@ -89,28 +89,28 @@ Resources:
   S3SQSLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      ContentUri: StudentsGrading/s3sqs-lambda-layer/target/s3sqs-lambda-layer.zip
+      ContentUri: StudentsGrading/layers/s3sqs-lambda-layer/target/s3sqs-lambda-layer.zip
       CompatibleRuntimes:
         - java11
 
   LoggingLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      ContentUri: StudentsGrading/logging-lambda-layer/target/logging-lambda-layer.zip
+      ContentUri: StudentsGrading/layers/logging-lambda-layer/target/logging-lambda-layer.zip
       CompatibleRuntimes:
         - java11
 
   LambdaCoreLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      ContentUri: StudentsGrading/lambda-core-lambda-layer/target/lambda-core-lambda-layer.zip
+      ContentUri: StudentsGrading/layers/lambda-core-lambda-layer/target/lambda-core-lambda-layer.zip
       CompatibleRuntimes:
         - java11
 
   MappingLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      ContentUri: StudentsGrading/mapping-lambda-layer/target/mapping-lambda-layer.zip
+      ContentUri: StudentsGrading/layers/mapping-lambda-layer/target/mapping-lambda-layer.zip
       CompatibleRuntimes:
         - java11
 
