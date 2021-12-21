@@ -234,4 +234,41 @@ AWS Recommendations:
 2.  StudentGradeLogging
     -  Cold Start: 343+406+343+263+329 = 1684ms
     -  Hot Start: 3+24+9+24+3 = 63ms
+
+####  15 Provide Layers Support for assignment-student-grading stack
+
+#####  15.7 Results
+
+1.  Warm Up with 3 students
+    -  StudentUpdateMonitoring - warmUp
+        -  `REPORT RequestId: 9d5554b0-9ffb-4e5b-8949-4023097b13dc	Duration: 2442.72 ms	Billed Duration: 2443 ms	Memory Size: 512 MB	Max Memory Used: 153 MB	Init Duration: 2457.89 ms`
+    -  StudentGradeLogging - warmUp
+        -  `REPORT RequestId: 93d3bb69-8229-5def-855a-e15260fd6550	Duration: 357.66 ms	Billed Duration: 358 ms	Memory Size: 512 MB	Max Memory Used: 109 MB	Init Duration: 1560.29 ms`
+        -  `REPORT RequestId: 84193d30-9206-59ed-9239-670b70ded597	Duration: 436.86 ms	Billed Duration: 437 ms	Memory Size: 512 MB	Max Memory Used: 109 MB	Init Duration: 1579.70 ms`
+2.  Hot start (2 StudentGradeLogging instances start)
+    -  StudentUpdateMonitoring - warm
+        -  `REPORT RequestId: d33dd832-44d7-4f35-969d-0ff5507f0dc9	Duration: 315.55 ms	Billed Duration: 316 ms	Memory Size: 512 MB	Max Memory Used: 154 MB`
+    -   StudentGradeLogging - warm - 86ms
+        -  `REPORT RequestId: 88b005ee-e826-5dfd-b287-5fd50b5e53c0	Duration: 13.72 ms	Billed Duration: 14 ms	Memory Size: 512 MB	Max Memory Used: 109 MB`
+        -  `REPORT RequestId: cad17cab-3e06-5db3-a940-2690dd7e731b	Duration: 12.31 ms	Billed Duration: 13 ms	Memory Size: 512 MB	Max Memory Used: 109 MB`
+        -  `REPORT RequestId: 5466a95d-1bd5-52b9-b21b-f366f8ad7ba7	Duration: 1.64 ms	Billed Duration: 2 ms	Memory Size: 512 MB	Max Memory Used: 110 MB`
+        -  `REPORT RequestId: ae3c5f01-1968-5af1-ae15-053afa10b58a	Duration: 20.80 ms	Billed Duration: 21 ms	Memory Size: 512 MB	Max Memory Used: 110 MB`
+        -  `REPORT RequestId: 234a6b4a-3100-5d6f-a12a-3171d278090d	Duration: 35.74 ms	Billed Duration: 36 ms	Memory Size: 512 MB	Max Memory Used: 111 MB`
+3.  Size
+    -  Before Layers
+        -  every lambda contains all the code (11.4 MB)
+        -  3 Lambdas * 11.4 MB = 34.2 MB in S3
+    -  After Layers
+        -  StudentsUpdateMonitoringFunction - 11.5 kB
+        -  ErrorHandlingFunction - 4.6 kB
+        -  StudentsGradeLoggingFunction - 8.2 kB
+        -  Layers        
+            -  lambda-core-lambda-layer - 715.4 KB
+            -  logging-lambda-layer - 1.8 MB
+            -  mapping-lambda-layer - 224.2 KB
+            -  s3sqs-lambda-layer - 7.4 MB
+        -  Total: 10.2 MB
+
+
+
     
