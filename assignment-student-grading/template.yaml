@@ -5,11 +5,9 @@ Description: >
 
   Sample SAM Template for assignment-student-grading
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 20
-    CodeUri: StudentsGrading/target/students-grading-1.0.jar
     Runtime: java11
     Architectures:
       - x86_64
@@ -23,10 +21,12 @@ Resources:
       BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
 
   StudentsUpdateMonitoringFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
+      CodeUri: StudentsGrading/update-monitoring/target/update-monitoring-1.0.jar
       Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.StudentUpdateMonitoring::handleRequest
-      Runtime: java11
+      Layers:
+        - !Ref S3SQSLambdaLayer
       Environment:
         Variables:
           STUDENTS_GRADE_QUEUE_URL: !Ref StudentsGradeQueue
@@ -34,7 +34,7 @@ Resources:
         - S3ReadPolicy:
             BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
         - SQSSendMessagePolicy:
-            QueueName:  !GetAtt StudentsGradeQueue.QueueName
+            QueueName: !GetAtt StudentsGradeQueue.QueueName
       Events:
         S3StudentsUpdateEvent:
           Type: S3
@@ -54,8 +54,9 @@ Resources:
     Type: AWS::SNS::Topic
 
   StudentsGradeLoggingFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
+      CodeUri: StudentsGrading/grade-logging/target/grade-logging-1.0.jar
       Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.StudentGradeLogging::handleRequest
       Events:
         SQSStudentsGradeEvent:
@@ -67,6 +68,7 @@ Resources:
   ErrorHandlingFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: StudentsGrading/error-handling/target/error-handling-1.0.jar
       Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.ErrorHandler::handleRequest
       Events:
         DLQEvent:
@@ -74,6 +76,11 @@ Resources:
           Properties:
             Topic: !Ref StudentsGradeDLQ
 
-
+  S3SQSLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: StudentsGrading/s3sqs-lambda-layer/target/s3sqs-lambda-layer.zip
+      CompatibleRuntimes:
+        - java11
 
 
