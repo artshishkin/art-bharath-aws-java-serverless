@@ -28,6 +28,7 @@ Resources:
       Layers:
         - !Ref S3SQSLambdaLayer
         - !Ref LoggingLambdaLayer
+        - !Ref LambdaCoreLambdaLayer
       Environment:
         Variables:
           STUDENTS_GRADE_QUEUE_URL: !Ref StudentsGradeQueue
@@ -61,6 +62,7 @@ Resources:
       Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.StudentGradeLogging::handleRequest
       Layers:
         - !Ref LoggingLambdaLayer
+        - !Ref LambdaCoreLambdaLayer
       Events:
         SQSStudentsGradeEvent:
           Type: SQS
@@ -75,6 +77,7 @@ Resources:
       Handler: net.shyshkin.study.aws.serverless.s3sns.assignment.ErrorHandler::handleRequest
       Layers:
         - !Ref LoggingLambdaLayer
+        - !Ref LambdaCoreLambdaLayer
       Events:
         DLQEvent:
           Type: SNS
@@ -92,6 +95,13 @@ Resources:
     Type: AWS::Serverless::LayerVersion
     Properties:
       ContentUri: StudentsGrading/logging-lambda-layer/target/logging-lambda-layer.zip
+      CompatibleRuntimes:
+        - java11
+
+  LambdaCoreLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: StudentsGrading/lambda-core-lambda-layer/target/lambda-core-lambda-layer.zip
       CompatibleRuntimes:
         - java11
 

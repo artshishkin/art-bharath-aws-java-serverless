@@ -13,13 +13,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-events</artifactId>
+            <groupId>net.shyshkin.study.aws.serverless.s3sns.assignment</groupId>
+            <artifactId>lambda-core-lambda-layer</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

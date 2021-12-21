@@ -11,6 +11,7 @@
         <module>grade-logging</module>
         <module>error-handling</module>
         <module>logging-lambda-layer</module>
+        <module>lambda-core-lambda-layer</module>
     </modules>
     <packaging>pom</packaging>
     <name>StudentsGrading</name>
