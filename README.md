@@ -271,4 +271,7 @@ AWS Recommendations:
 
 
 
+####  16 Test Log4J Vulnerability (Log4Shell)
+
+-  `sam local invoke LoggingLambda -e events/event.json`
     
